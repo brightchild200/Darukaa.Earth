@@ -1,0 +1,62 @@
+repos:
+  # Frontend: lint-staged handles this via package.json
+  # But we can add a repo-level hook for consistency
+  - repo: local
+    hooks:
+      - id: frontend-lint
+        name: Frontend Lint & Format
+        entry: bash -c 'cd frontend && npm run check'
+        language: system
+        types: [file]
+        files: ^frontend/
+        pass_filenames: false
+        stages: [pre-commit]
+
+  # Backend: Ruff lint + format
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.0
+    hooks:
+      - id: ruff
+        name: Ruff Lint
+        args: [--fix, --exit-non-zero-on-fix]
+        types: [python]
+        files: ^backend/
+      - id: ruff-format
+        name: Ruff Format
+        types: [python]
+        files: ^backend/
+
+  # Backend: mypy type checking
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.11.0
+    hooks:
+      - id: mypy
+        name: MyPy Type Check
+        additional_dependencies: [
+          "sqlalchemy==2.0.36",
+          "pydantic==2.9.2",
+          "fastapi==0.115.0",
+          "pydantic-settings==2.6.1",
+          "passlib==1.7.4",
+          "python-jose==3.3.0",
+          "alembic==1.13.2",
+          "types-python-dotenv==1.0.1",
+          "types-psycopg2==2.9.10",
+        ]
+        types: [python]
+        files: ^backend/
+        args: [--config-file, backend/pyproject.toml]
+
+  # General: trailing whitespace, end-of-file, etc.
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^backend/migrations/
+      - id: end-of-file-fixer
+        exclude: ^backend/migrations/
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: detect-private-key

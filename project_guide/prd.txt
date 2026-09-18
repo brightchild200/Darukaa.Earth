@@ -1,0 +1,951 @@
+DARUKAA.EARTH
+Product Requirements Document — PRD
+
+Version: 1.0
+Project Type: Full-Stack Geospatial Analytics Platform
+Hackathon Build Target: 15 hours
+Primary Users: Admin / Project Manager
+Core Domain: Carbon & Biodiversity Project Management
+
+1. Product Overview
+
+Darukaa.Earth is a geospatial data analytics platform that enables users to create, manage, visualize, and analyze carbon and biodiversity projects geographically.
+
+The platform combines:
+
+Project management
+Interactive geospatial mapping
+Polygon-based site creation
+Environmental metrics
+Time-series analytics
+Project-level KPIs
+
+The primary experience is:
+
+Create Project
+      ↓
+Add Geographic Sites
+      ↓
+Draw Site Polygon
+      ↓
+Store Polygon in PostGIS
+      ↓
+Select Site
+      ↓
+View Site Intelligence
+      ↓
+Analyze Environmental Performance
+2. Problem Statement
+
+Carbon and biodiversity projects are inherently geographic.
+
+A traditional dashboard can show:
+
+Carbon captured
+Biodiversity score
+NDVI
+Project performance
+
+but doesn't naturally answer:
+
+"Where exactly is this project happening, and how is each geographic site performing?"
+
+Darukaa.Earth combines spatial context + environmental analytics in one interface.
+
+3. Product Goals
+Primary Goals
+Allow users to create environmental projects.
+Allow multiple geographic sites per project.
+Allow users to draw site boundaries directly on a map.
+Persist geographic boundaries using PostGIS.
+Display all project sites on an interactive map.
+Allow users to select a site and inspect its performance.
+Visualize environmental metrics over time.
+Provide a polished, intuitive dashboard experience.
+Secondary Goals
+Demonstrate production-quality architecture.
+Demonstrate proper geospatial database usage.
+Demonstrate CI/CD and code-quality automation.
+Provide realistic environmental demo data.
+4. Target User
+Admin / Project Manager
+
+The primary user should be able to:
+
+Register/login
+Create projects
+View projects
+Open a project
+View project sites
+Draw a new site
+Save the site
+Select an existing site
+View site analytics
+5. Core User Stories
+Authentication
+
+As an admin, I want to register and log in so that project data is protected.
+
+Project Creation
+
+As an admin, I want to create a project so that I can manage its environmental sites.
+
+Site Creation
+
+As an admin, I want to draw a polygon on the map so that I can define the geographic boundary of a site.
+
+Site Management
+
+As an admin, I want to see all sites belonging to a project on a map.
+
+Site Analytics
+
+As an admin, I want to select a site and see its environmental performance over time.
+
+Project Overview
+
+As an admin, I want to see project-level KPIs so that I can quickly understand overall performance.
+
+6. Functional Requirements
+FR-01 Authentication
+
+The system shall support:
+
+User registration
+User login
+Logout
+Protected application routes
+Authenticated API/database access
+FR-02 Project Management
+
+Users shall be able to:
+
+Create project
+View project list
+View project details
+View project status
+View project type
+View project dates
+
+Project types:
+
+Carbon
+Biodiversity
+Mixed
+
+Project statuses:
+
+Draft
+Active
+Completed
+Archived
+7. FR-03 Geographic Site Management
+
+Users shall be able to:
+
+Add a site
+Enter site name
+Enter description
+Draw polygon
+Save polygon
+View saved polygon
+Select polygon
+View site details
+
+Each site belongs to exactly one project.
+
+Project
+   │
+   ├── Site A
+   ├── Site B
+   └── Site C
+8. FR-04 Geospatial Requirements
+
+The map shall:
+
+Display project sites
+Support polygon drawing
+Allow polygon editing before save
+Allow polygon deletion/cancel
+Highlight selected site
+Zoom to selected site
+
+Geometry shall be stored in:
+
+PostGIS
+
+Coordinate reference system:
+
+EPSG:4326
+9. FR-05 Environmental Analytics
+
+Each site may have:
+
+Carbon
+Carbon Sequestered
+tCO₂e
+Biodiversity
+Biodiversity Index
+Vegetation
+NDVI
+Financial / Carbon Credit
+Projected Credit Value
+USD
+10. FR-06 Time-Series Visualization
+
+For each site, users should be able to view:
+
+Carbon chart
+Carbon Sequestered
+        │
+        │            ╱
+        │         ╱
+        │      ╱
+        │   ╱
+        └──────────────
+          Time
+Biodiversity chart
+Biodiversity Index
+        │       ╱────
+        │    ╱
+        │ ╱
+        └──────────────
+          Time
+NDVI
+
+Show vegetation health trend over time.
+
+11. FR-07 Project KPIs
+
+Dashboard should display:
+
+TOTAL PROJECTS
+      3
+
+TOTAL SITES
+      7
+
+TOTAL AREA
+   4,823 ha
+
+CARBON SEQUESTERED
+   128K tCO₂e
+
+BIODIVERSITY
+    +18.4%
+
+PROJECTED VALUE
+   $2.4M
+
+These numbers should be derived from project/site data where practical.
+
+12. Non-Functional Requirements
+Performance
+
+Initial dashboard should aim for:
+
+Fast first render
+Lazy loading of heavy map/chart components
+Efficient database queries
+Spatial indexes
+Security
+
+The system shall:
+
+Protect authenticated routes
+Never expose database credentials
+Validate API inputs
+Validate polygon geometry
+Enforce ownership/access rules
+Store passwords securely if using custom authentication
+Reliability
+
+The system should:
+
+Handle invalid polygons
+Handle failed API requests
+Display loading states
+Display empty states
+Display error states
+Prevent duplicate metric records
+13. UX Requirements
+
+The application should have:
+
+Dashboard
+┌────────────────────────────────────────────┐
+│ DARUKAA.EARTH                  User / Menu │
+├────────────────────────────────────────────┤
+│                                            │
+│  Projects    Sites    Area    Carbon       │
+│     03         07    4,823    128K         │
+│                                            │
+├────────────────────────────────────────────┤
+│                                            │
+│              INTERACTIVE MAP               │
+│                                            │
+│       ▰ Site A                             │
+│                    ▰ Site B                │
+│                                            │
+├────────────────────────────────────────────┤
+│ Recent Projects                            │
+│                                            │
+└────────────────────────────────────────────┘
+14. Site Intelligence UX
+
+When a user clicks a polygon:
+
+                         MAP
+┌──────────────────────────────────────┐
+│                                      │
+│                 SITE                 │
+│                                      │
+│                         ┌────────────┤
+│                         │ Site Alpha │
+│                         │            │
+│                         │ 1,240 ha   │
+│                         │            │
+│                         │ Carbon     │
+│                         │ 24.8K      │
+│                         │            │
+│                         │ Biodiversity│
+│                         │ 82.4       │
+│                         │            │
+│                         │ [Analytics]│
+│                         └────────────┤
+└──────────────────────────────────────┘
+
+This site intelligence drawer should be the main demo moment.
+
+15. MVP Prioritization
+P0 — Must Have
+Authentication
+Project creation
+Project list
+Interactive Mapbox map
+Polygon drawing
+Polygon persistence
+PostGIS
+Site selection
+Site details
+Metrics
+Charts
+P1 — Should Have
+Dashboard KPIs
+Map filters
+Project filtering
+Smooth drawer animation
+Loading states
+Empty states
+Responsive layout
+P2 — If Time Remains
+CSV export
+Report generation
+Sharing
+Advanced filters
+Audit history
+Multi-user project collaboration
+16. Success Criteria
+
+A successful MVP should allow a judge to complete this journey:
+
+LOGIN
+ ↓
+DASHBOARD
+ ↓
+SELECT PROJECT
+ ↓
+SEE SITES ON MAP
+ ↓
+DRAW NEW SITE
+ ↓
+SAVE SITE
+ ↓
+CLICK SITE
+ ↓
+VIEW ANALYTICS
+ ↓
+UNDERSTAND PERFORMANCE
+
+without needing developer intervention.
+
+DARUKAA.EARTH
+Technical Requirements Document — TRD
+1. Technical Architecture
+
+Recommended architecture:
+
+                   ┌────────────────────┐
+                   │      Browser       │
+                   │ React + TypeScript │
+                   └─────────┬──────────┘
+                             │
+                 ┌───────────┴───────────┐
+                 │                       │
+             Mapbox API              Supabase
+                 │                       │
+                 │             ┌─────────┴─────────┐
+                 │             │                   │
+                 │          Supabase Auth      PostgreSQL
+                 │                                 │
+                 │                              PostGIS
+                 │                                 │
+                 │                           Site Geometries
+                 │
+                 └───────────────────────────────┘
+
+                     Highcharts
+                         │
+                         ▼
+                  Environmental Data
+2. Frontend Stack
+Framework
+React
+TypeScript
+Vite
+Styling
+Tailwind CSS
+Components
+shadcn/ui
+Mapping
+Mapbox GL JS
+react-map-gl
+Mapbox GL Draw
+Charts
+Highcharts
+3. Backend Options
+
+You have two viable architectures.
+
+Option A — Challenge-pure
+React
+ ↓
+FastAPI
+ ↓
+PostgreSQL + PostGIS
+
+Authentication:
+
+JWT
+Option B — Hackathon optimized
+React
+ ↓
+Supabase
+ ↓
+PostgreSQL + PostGIS
+
+Authentication:
+
+Supabase Auth
+
+For a 15-hour hackathon, I'd use Option B unless the challenge explicitly requires a separately implemented Python backend.
+
+The challenge specifies Python with Flask/Django/FastAPI as the backend, so if the judging rubric checks for an actual Python backend, use:
+
+React
+ ↓
+FastAPI
+ ↓
+Supabase PostgreSQL
+
+That gives you both:
+
+Python backend + PostgreSQL/PostGIS + Supabase infrastructure.
+
+4. Database Architecture
+
+Core tables:
+
+users
+   │
+   │ 1:N
+   ▼
+projects
+   │
+   │ 1:N
+   ▼
+sites
+   │
+   │ 1:N
+   ▼
+site_metrics
+5. Users
+users
+────────────────────────────
+id              UUID PK
+email           VARCHAR
+full_name       VARCHAR
+hashed_password TEXT
+is_active       BOOLEAN
+created_at      TIMESTAMP
+updated_at      TIMESTAMP
+Important Supabase consideration
+
+If you use Supabase Auth, don't create your own password system.
+
+Instead:
+
+auth.users
+     │
+     │ 1:1
+     ▼
+public.profiles
+
+Your application profile table can contain:
+
+profiles
+────────────────────────
+id          UUID PK
+full_name   TEXT
+created_at  TIMESTAMPTZ
+updated_at  TIMESTAMPTZ
+
+profiles.id references:
+
+auth.users.id
+
+This is cleaner.
+
+6. Projects Table
+CREATE TABLE projects (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    owner_id UUID NOT NULL
+        REFERENCES auth.users(id)
+        ON DELETE CASCADE,
+
+    name VARCHAR(200) NOT NULL,
+
+    description TEXT,
+
+    project_type VARCHAR(30) NOT NULL
+        CHECK (
+            project_type IN (
+                'Carbon',
+                'Biodiversity',
+                'Mixed'
+            )
+        ),
+
+    status VARCHAR(30) NOT NULL DEFAULT 'active'
+        CHECK (
+            status IN (
+                'draft',
+                'active',
+                'completed',
+                'archived'
+            )
+        ),
+
+    start_date DATE,
+    end_date DATE,
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+7. Sites Table
+
+This is the most important table technically.
+
+CREATE EXTENSION IF NOT EXISTS postgis;
+
+Then:
+
+CREATE TABLE sites (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    project_id UUID NOT NULL
+        REFERENCES projects(id)
+        ON DELETE CASCADE,
+
+    name VARCHAR(200) NOT NULL,
+
+    description TEXT,
+
+    geometry GEOMETRY(POLYGON, 4326) NOT NULL,
+
+    area_ha NUMERIC(14,4),
+
+    status VARCHAR(30) NOT NULL DEFAULT 'active'
+        CHECK (
+            status IN (
+                'active',
+                'inactive',
+                'pending',
+                'archived'
+            )
+        ),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+Spatial index:
+
+CREATE INDEX idx_sites_geometry
+ON sites
+USING GIST (geometry);
+
+This is important for geospatial queries.
+
+8. Site Metrics
+CREATE TABLE site_metrics (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+    site_id UUID NOT NULL
+        REFERENCES sites(id)
+        ON DELETE CASCADE,
+
+    metric_date DATE NOT NULL,
+
+    carbon_tco2e NUMERIC(14,2),
+
+    biodiversity_index NUMERIC(6,4),
+
+    ndvi NUMERIC(6,4),
+
+    projected_credit_usd NUMERIC(16,2),
+
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    UNIQUE(site_id, metric_date)
+);
+
+Index:
+
+CREATE INDEX idx_site_metrics_site_date
+ON site_metrics(site_id, metric_date);
+9. Complete ERD
+┌───────────────────────┐
+│     auth.users        │
+├───────────────────────┤
+│ PK id                 │
+│ email                 │
+└───────────┬───────────┘
+            │
+            │ 1 : N
+            ▼
+┌───────────────────────┐
+│       projects        │
+├───────────────────────┤
+│ PK id                 │
+│ FK owner_id           │
+│ name                  │
+│ description           │
+│ project_type          │
+│ status                │
+│ start_date            │
+│ end_date              │
+└───────────┬───────────┘
+            │
+            │ 1 : N
+            ▼
+┌───────────────────────┐
+│         sites         │
+├───────────────────────┤
+│ PK id                 │
+│ FK project_id         │
+│ name                  │
+│ description           │
+│ geometry              │◄──── PostGIS
+│ area_ha               │
+│ status                │
+└───────────┬───────────┘
+            │
+            │ 1 : N
+            ▼
+┌───────────────────────┐
+│     site_metrics      │
+├───────────────────────┤
+│ PK id                 │
+│ FK site_id            │
+│ metric_date           │
+│ carbon_tco2e          │
+│ biodiversity_index    │
+│ ndvi                  │
+│ projected_credit_usd  │
+└───────────────────────┘
+10. PostGIS Data Flow
+
+When user draws a polygon:
+
+Mapbox Draw
+     ↓
+GeoJSON
+     ↓
+Frontend validation
+     ↓
+FastAPI
+     ↓
+GeoJSON → PostGIS geometry
+     ↓
+ST_GeomFromGeoJSON()
+     ↓
+sites.geometry
+
+Example:
+
+{
+  "type": "Polygon",
+  "coordinates": [
+    [
+      [-73.99, -3.45],
+      [-73.97, -3.45],
+      [-73.97, -3.47],
+      [-73.99, -3.47],
+      [-73.99, -3.45]
+    ]
+  ]
+}
+11. Area Calculation
+
+Don't trust the frontend to calculate area.
+
+Calculate it on the backend/database.
+
+SELECT
+    ST_Area(geometry::geography) / 10000
+AS area_ha
+FROM sites;
+
+Why?
+
+Because:
+
+Frontend area
+      ❌
+Potentially inaccurate
+
+PostGIS area
+      ✅
+Geospatial calculation
+12. API Requirements
+
+If using FastAPI:
+
+Authentication
+POST /auth/register
+POST /auth/login
+GET  /auth/me
+Projects
+GET    /projects
+POST   /projects
+GET    /projects/{project_id}
+PATCH  /projects/{project_id}
+DELETE /projects/{project_id}
+Sites
+GET    /projects/{project_id}/sites
+POST   /projects/{project_id}/sites
+GET    /sites/{site_id}
+PATCH  /sites/{site_id}
+DELETE /sites/{site_id}
+Analytics
+GET /sites/{site_id}/metrics
+GET /projects/{project_id}/analytics
+13. API Response Example
+Site
+{
+  "id": "uuid",
+  "project_id": "uuid",
+  "name": "Amazon Site Alpha",
+  "area_ha": 1240.42,
+  "status": "active",
+  "geometry": {
+    "type": "Polygon",
+    "coordinates": []
+  }
+}
+Metrics
+{
+  "site_id": "uuid",
+  "metrics": [
+    {
+      "date": "2026-01-01",
+      "carbon_tco2e": 12000,
+      "biodiversity_index": 0.72,
+      "ndvi": 0.61,
+      "projected_credit_usd": 250000
+    }
+  ]
+}
+14. Supabase Architecture — Recommended
+
+If you choose Supabase, I'd structure it like this:
+
+                    SUPABASE
+                       │
+        ┌──────────────┼───────────────┐
+        │              │               │
+        ▼              ▼               ▼
+   Supabase Auth   PostgreSQL       Storage
+                      │
+                    PostGIS
+                      │
+            ┌─────────┼─────────┐
+            ▼         ▼         ▼
+         projects    sites    metrics
+
+Frontend:
+
+React
+ │
+ ├── Supabase Auth
+ │
+ ├── Supabase Client
+ │
+ └── Mapbox
+
+If using FastAPI:
+
+React
+ │
+ ├──────────────► Supabase Auth
+ │
+ └──────────────► FastAPI
+                       │
+                       ▼
+                  Supabase DB
+                       │
+                    PostGIS
+15. Should You Use Supabase?
+Yes, but choose one of these two approaches.
+Architecture	Speed	Challenge Alignment	Complexity
+React → Supabase	⭐⭐⭐⭐⭐	Good	Low
+React → FastAPI → Supabase DB	⭐⭐⭐⭐	Very strong	Medium
+React → FastAPI → self-hosted PostgreSQL	⭐⭐⭐	Strong	Higher
+
+For 15 hours, I recommend:
+
+React + FastAPI + Supabase PostgreSQL/PostGIS
+
+Why?
+
+You get:
+
+Supabase
+├── PostgreSQL
+├── PostGIS
+├── Auth
+├── Database dashboard
+├── Hosted infrastructure
+└── Easy deployment
+
++
+
+FastAPI
+├── API layer
+├── Validation
+├── Business logic
+└── Analytics aggregation
+
+This lets you demonstrate actual backend engineering rather than making the frontend talk directly to the database.
+
+16. One Important Caveat
+
+The challenge explicitly asks for:
+
+Python with Flask/Django/FastAPI
+
+So don't present:
+
+React → Supabase
+
+as your entire backend if the judges expect a Python backend.
+
+Instead:
+
+React
+  ↓
+FastAPI
+  ↓
+Supabase PostgreSQL
+  ↓
+PostGIS
+
+Use Supabase primarily as your managed PostgreSQL/PostGIS + Auth/infrastructure layer, while FastAPI remains your application backend.
+
+That is a very defensible architecture for the challenge.
+
+17. Recommended Final Stack
+FRONTEND
+──────────────
+React
+TypeScript
+Vite
+Tailwind
+shadcn/ui
+Mapbox GL JS
+Mapbox Draw
+Highcharts
+
+
+BACKEND
+──────────────
+Python 3.11+
+FastAPI
+Pydantic
+SQLAlchemy
+GeoAlchemy2
+
+
+DATABASE
+──────────────
+Supabase
+PostgreSQL
+PostGIS
+
+
+AUTH
+──────────────
+Supabase Auth
+JWT
+
+
+DEVOPS
+──────────────
+GitHub
+GitHub Actions
+Vercel
+Render
+
+
+CODE QUALITY
+──────────────
+ESLint
+Prettier
+Husky
+lint-staged
+Black
+isort
+Ruff
+Final architecture I'd actually build
+                 ┌─────────────────┐
+                 │     VERCEL      │
+                 │ React + Vite    │
+                 └────────┬────────┘
+                          │
+                HTTPS / REST / JWT
+                          │
+                          ▼
+                 ┌─────────────────┐
+                 │     RENDER      │
+                 │    FastAPI      │
+                 └────────┬────────┘
+                          │
+                     SQLAlchemy
+                     GeoAlchemy2
+                          │
+                          ▼
+              ┌──────────────────────┐
+              │       SUPABASE       │
+              │                      │
+              │ PostgreSQL           │
+              │ + PostGIS            │
+              │ + Auth               │
+              └──────────┬───────────┘
+                         │
+                         ▼
+                  Environmental
+                     Data
+
+This gives you the strongest balance of hackathon speed and technical credibility. The core database remains relational and geospatial, while Supabase removes a lot of infrastructure work that would otherwise consume your 15-hour window.
