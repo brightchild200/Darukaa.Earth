@@ -1,5 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api, type ProjectListItem, type ProjectDetail, type Site, type SiteAnalytics, type ProjectAnalytics } from '@/lib/api';
+import {
+  api,
+  type ProjectListItem,
+  type ProjectDetail,
+  type Site,
+  type SiteAnalytics,
+  type ProjectAnalytics,
+} from '@/lib/api';
 
 export function useProjects() {
   const [projects, setProjects] = useState<ProjectListItem[]>([]);
@@ -20,7 +27,7 @@ export function useProjects() {
   }, []);
 
   useEffect(() => {
-    fetchProjects();
+    void fetchProjects();
   }, [fetchProjects]);
 
   return { projects, loading, error, refetch: fetchProjects };
@@ -46,7 +53,7 @@ export function useProject(projectId: string | undefined) {
   }, [projectId]);
 
   useEffect(() => {
-    fetchProject();
+    void fetchProject();
   }, [fetchProject]);
 
   return { project, loading, error, refetch: fetchProject };
@@ -72,7 +79,7 @@ export function useSites(projectId: string | undefined) {
   }, [projectId]);
 
   useEffect(() => {
-    fetchSites();
+    void fetchSites();
   }, [fetchSites]);
 
   return { sites, loading, error, refetch: fetchSites };
@@ -98,7 +105,7 @@ export function useSiteAnalytics(projectId: string | undefined, siteId: string |
   }, [projectId, siteId]);
 
   useEffect(() => {
-    fetchAnalytics();
+    void fetchAnalytics();
   }, [fetchAnalytics]);
 
   return { analytics, loading, error, refetch: fetchAnalytics };
@@ -124,7 +131,7 @@ export function useProjectAnalytics(projectId: string | undefined) {
   }, [projectId]);
 
   useEffect(() => {
-    fetchAnalytics();
+    void fetchAnalytics();
   }, [fetchAnalytics]);
 
   return { analytics, loading, error, refetch: fetchAnalytics };

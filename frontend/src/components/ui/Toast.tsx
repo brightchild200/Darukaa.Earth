@@ -17,22 +17,22 @@ export function ToastContainer() {
   const { toasts, dismissToast } = useToast();
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col gap-3 max-w-sm">
-      {toasts.map((toast) => {
+    <div className="fixed bottom-6 right-6 z-[9999] flex max-w-sm flex-col gap-3">
+      {toasts.map(toast => {
         const Icon = iconMap[toast.type];
         return (
           <div
             key={toast.id}
-            className="flex items-start gap-3 bg-elevated border border-app rounded-lg px-4 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.4)] animate-fade-up"
+            className="animate-fade-up flex items-start gap-3 rounded-lg border border-app bg-elevated px-4 py-3.5 shadow-[0_8px_32px_rgba(0,0,0,0.4)]"
           >
-            <Icon className={`w-5 h-5 mt-0.5 shrink-0 ${colorMap[toast.type]}`} />
-            <p className="text-sm text-fg flex-1 leading-relaxed">{toast.message}</p>
+            <Icon className={`mt-0.5 h-5 w-5 shrink-0 ${colorMap[toast.type]}`} />
+            <p className="text-fg flex-1 text-sm leading-relaxed">{toast.message}</p>
             <button
               onClick={() => dismissToast(toast.id)}
-              className="text-muted hover:text-fg transition-colors duration-fast"
+              className="hover:text-fg text-muted transition-colors duration-fast"
               aria-label="Dismiss"
             >
-              <X className="w-4 h-4" />
+              <X className="h-4 w-4" />
             </button>
           </div>
         );

@@ -15,19 +15,19 @@ export function MapLegend({ visibleStatuses }: MapLegendProps) {
   const statuses = Object.keys(statusConfig) as SiteStatus[];
 
   return (
-    <div className="absolute bottom-6 left-4 z-[1000] bg-elevated/90 backdrop-blur-sm border border-app rounded-lg p-3 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-      <div className="flex items-center gap-2 mb-2">
-        <Leaf className="w-3.5 h-3.5 text-primary" />
-        <span className="text-xs font-medium text-fg">Site Status</span>
+    <div className="absolute bottom-6 left-4 z-[1000] rounded-lg border border-app bg-elevated/90 p-3 shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-sm">
+      <div className="mb-2 flex items-center gap-2">
+        <Leaf className="h-3.5 w-3.5 text-primary" />
+        <span className="text-fg text-xs font-medium">Site Status</span>
       </div>
       <div className="flex flex-col gap-1.5">
-        {statuses.map((status) => {
+        {statuses.map(status => {
           const config = statusConfig[status];
           const isVisible = visibleStatuses.has(status);
           return (
             <div key={status} className="flex items-center gap-2">
               <span
-                className="w-3 h-3 rounded-sm border"
+                className="h-3 w-3 rounded-sm border"
                 style={{
                   backgroundColor: isVisible ? `${config.color}40` : 'transparent',
                   borderColor: config.color,

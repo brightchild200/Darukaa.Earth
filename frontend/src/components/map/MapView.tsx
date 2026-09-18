@@ -85,10 +85,10 @@ export function MapView({
     if (!map) return;
 
     // Clear existing polygons
-    polygonRefs.current.forEach((poly) => poly.remove());
+    polygonRefs.current.forEach(poly => poly.remove());
     polygonRefs.current.clear();
 
-    sites.forEach((site) => {
+    sites.forEach(site => {
       const color = statusColors[site.status] || '#6EE7A1';
       const isSelected = site.id === selectedSiteId;
 
@@ -133,7 +133,7 @@ export function MapView({
     const map = mapRef.current;
     if (!map || !selectedSiteId) return;
 
-    const site = sites.find((s) => s.id === selectedSiteId);
+    const site = sites.find(s => s.id === selectedSiteId);
     if (site) {
       map.flyTo(site.center, Math.max(map.getZoom(), 6), {
         duration: 1.2,
@@ -155,7 +155,7 @@ export function MapView({
     const map = mapRef.current;
     if (!map) return;
     if (sites.length > 0) {
-      const bounds = L.latLngBounds(sites.flatMap((s) => s.polygon));
+      const bounds = L.latLngBounds(sites.flatMap(s => s.polygon));
       map.flyToBounds(bounds, { padding: [50, 50], duration: 1.2 });
     } else {
       map.flyTo(center, zoom, { duration: 1.2 });
@@ -164,7 +164,7 @@ export function MapView({
 
   // Drawing mode
   const handleDraw = useCallback(() => {
-    setIsDrawing((prev) => {
+    setIsDrawing(prev => {
       const next = !prev;
       const map = mapRef.current;
       if (!map) return next;
@@ -176,7 +176,7 @@ export function MapView({
         map.getContainer().style.cursor = '';
         map.doubleClickZoom.enable();
         // Clear drawing
-        drawMarkersRef.current.forEach((m) => m.remove());
+        drawMarkersRef.current.forEach(m => m.remove());
         drawMarkersRef.current = [];
         if (drawLineRef.current) {
           drawLineRef.current.remove();
@@ -238,7 +238,7 @@ export function MapView({
       onSiteCreated?.(points, area, center);
 
       // Cleanup drawing
-      drawMarkersRef.current.forEach((m) => m.remove());
+      drawMarkersRef.current.forEach(m => m.remove());
       drawMarkersRef.current = [];
       if (drawLineRef.current) {
         drawLineRef.current.remove();
@@ -261,24 +261,20 @@ export function MapView({
 
   return (
     <div className={`relative ${className}`}>
-      <div
-        ref={containerRef}
-        className="absolute inset-0 z-0"
-        style={{ background: '#07110D' }}
-      />
+      <div ref={containerRef} className="absolute inset-0 z-0" style={{ background: '#07110D' }} />
 
       {loading && (
-        <div className="absolute inset-0 z-[1001] bg-app flex flex-col items-center justify-center">
-          <div className="w-8 h-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-3" />
+        <div className="absolute inset-0 z-[1001] flex flex-col items-center justify-center bg-app">
+          <div className="mb-3 h-8 w-8 animate-spin rounded-full border-2 border-primary/20 border-t-primary" />
           <p className="text-sm text-muted">Loading environmental data...</p>
         </div>
       )}
 
       {isDrawing && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[1000] bg-elevated/90 backdrop-blur-sm border border-primary/20 rounded-lg px-4 py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.3)] animate-fade-in">
-          <p className="text-sm text-fg">
-            <span className="text-primary font-medium">Drawing mode:</span> Click to place
-            boundary points, double-click to complete.
+        <div className="animate-fade-in absolute left-1/2 top-4 z-[1000] -translate-x-1/2 rounded-lg border border-primary/20 bg-elevated/90 px-4 py-2.5 shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-sm">
+          <p className="text-fg text-sm">
+            <span className="font-medium text-primary">Drawing mode:</span> Click to place boundary
+            points, double-click to complete.
           </p>
         </div>
       )}

@@ -17,34 +17,34 @@ export function MapToolbar({ onZoomIn, onZoomOut, onLocate, onDraw, isDrawing }:
   ];
 
   return (
-    <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-1.5 bg-elevated/90 backdrop-blur-sm border border-app rounded-lg p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
-      {tools.map((tool) => {
+    <div className="absolute right-4 top-4 z-[1000] flex flex-col gap-1.5 rounded-lg border border-app bg-elevated/90 p-1.5 shadow-[0_4px_20px_rgba(0,0,0,0.3)] backdrop-blur-sm">
+      {tools.map(tool => {
         const Icon = tool.icon;
         return (
           <button
             key={tool.label}
             onClick={tool.onClick}
-            className={`group relative w-10 h-10 rounded-md flex items-center justify-center transition-all duration-fast ease-out ${
+            className={`group relative flex h-10 w-10 items-center justify-center rounded-md transition-all duration-fast ease-out ${
               tool.active
                 ? 'bg-primary/15 text-primary'
-                : 'text-muted hover:text-fg hover:bg-surface'
+                : 'hover:text-fg text-muted hover:bg-surface'
             }`}
             aria-label={tool.label}
           >
             <Icon className="w-4.5 h-4.5" />
-            <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-elevated border border-app rounded-md px-2.5 py-1.5 text-xs text-fg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-fast shadow-lg">
+            <span className="text-fg pointer-events-none absolute right-12 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md border border-app bg-elevated px-2.5 py-1.5 text-xs opacity-0 shadow-lg transition-opacity duration-fast group-hover:opacity-100">
               {tool.label}
             </span>
           </button>
         );
       })}
-      <div className="h-px bg-app my-0.5" />
+      <div className="my-0.5 h-px bg-app" />
       <button
-        className="group relative w-10 h-10 rounded-md flex items-center justify-center text-muted hover:text-fg hover:bg-surface transition-all duration-fast ease-out"
+        className="hover:text-fg group relative flex h-10 w-10 items-center justify-center rounded-md text-muted transition-all duration-fast ease-out hover:bg-surface"
         aria-label="Layers"
       >
         <Layers className="w-4.5 h-4.5" />
-        <span className="absolute right-12 top-1/2 -translate-y-1/2 bg-elevated border border-app rounded-md px-2.5 py-1.5 text-xs text-fg whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-fast shadow-lg">
+        <span className="text-fg pointer-events-none absolute right-12 top-1/2 -translate-y-1/2 whitespace-nowrap rounded-md border border-app bg-elevated px-2.5 py-1.5 text-xs opacity-0 shadow-lg transition-opacity duration-fast group-hover:opacity-100">
           Layers
         </span>
       </button>

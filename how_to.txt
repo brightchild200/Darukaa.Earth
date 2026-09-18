@@ -1,0 +1,84 @@
+Running the Project
+Prerequisites
+- Python 3.12+ (for backend)
+- Node.js 18+ (for frontend)
+- The Supabase project is configured but having DNS issues locally, so we're using SQLite for development
+1. Backend (FastAPI) - Terminal 1
+cd C:\Users\riyas\OneDrive\Documents\sies_things\hackathons\Daruka_full_stack\backend
+
+# Install dependencies (already done)
+pip install -r requirements.txt
+
+# Run the server
+uvicorn app.main:app --reload --port 8000
+API will be at: http://localhost:8000  
+Docs (Swagger): http://localhost:8000/docs
+2. Frontend (React + Vite) - Terminal 2
+cd C:\Users\riyas\OneDrive\Documents\sies_things\hackathons\Daruka_full_stack\frontend
+
+# Install dependencies (already done)
+npm install
+
+# Development server
+npm run dev
+Frontend will be at: http://localhost:5173
+3. Database (Already seeded)
+The SQLite database darukaa_dev.db in /backend already contains:
+- 3 Projects (Amazon, Kenya, Borneo)
+- 7 Sites with polygons
+- 84 Monthly metrics records
+To re-seed if needed:
+cd backend
+python seed.py
+4. Test the Integration
+Login credentials (any email/password works with Supabase Auth):
+- Register a new account at http://localhost:5173/register
+- Or use Supabase Auth directly
+API Endpoints to test:
+# Health check
+curl http://localhost:8000/health
+
+# List projects (requires auth token)
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/projects
+
+# Get project detail
+curl -H "Authorization: Bearer YOUR_TOKEN" http://localhost:8000/projects/{project_id}/detail
+Project Structure
+Daruka_full_stack/
+├── frontend/          # React 18 + Vite + TypeScript + Tailwind + Leaflet + Highcharts
+│   ├── src/
+│   │   ├── pages/     # Login, Register, Dashboard, Project
+│   │   ├── components/ # MapView, SiteDrawer, AnalyticsChart, etc.
+│   │   ├── hooks/      # useApi, useToast, useCountUp
+│   │   ├── lib/        # api.ts, adapters.ts, utils.ts
+│   │   └── types/      # TypeScript interfaces
+│   └── package.json
+│
+├── backend/           # FastAPI + SQLAlchemy + GeoAlchemy2
+│   ├── app/
+│   │   ├── routers/   # auth, projects, sites, metrics
+│   │   ├── services/  # Business logic
+│   │   ├── repositories/ # Data access
+│   │   ├── models/    # SQLAlchemy models
+│   │   └── schemas/   # Pydantic schemas
+│   ├── seed.py        # Demo data seeder
+│   ├── darukaa_dev.db # SQLite database
+│   └── requirements.txt
+│
+├── .env               # Environment variables (both frontend + backend)
+└── .env.example       # Template
+Troubleshooting
+Issue	Fix
+"Cannot find module"	Run npm install in /frontend
+"Module not found: geoalchemy2"	Run pip install -r requirements.txt in /backend
+CORS errors	Backend CORS allows http://localhost:5173
+Auth not working	Check VITE_API_URL=http://localhost:8000 in .env
+Map not loading	Leaflet uses CartoDB dark tiles (no API key needed)
+Quick Demo Flow (3 minutes)
+1. Open http://localhost:5173
+2. Register a new account
+3. Dashboard → See 3 projects, 7 sites on map
+4. Click a project → Project detail page
+5. Click a site on map → Site Intelligence Drawer opens
+6. Switch metrics (Carbon/Biodiversity/NDVI/Value) in chart
+7. Draw new site → Click "Draw" tool → Click points → Double-click to finish → Save

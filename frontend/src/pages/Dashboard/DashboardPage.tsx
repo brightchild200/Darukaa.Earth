@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Leaf, MapPin, Layers, TrendingUp } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
@@ -10,10 +10,10 @@ import { SiteDrawer } from '@/components/sites/SiteDrawer';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { Skeleton } from '@/components/ui/Skeleton';
 import { useToast } from '@/hooks/useToast';
-import { useProjects, useSites, useProject } from '@/hooks/useApi';
-import { adaptProject, adaptSite } from '@/lib/adapters';
+import { useProjects, useSites } from '@/hooks/useApi';
+import { adaptSite } from '@/lib/adapters';
 import { formatNumber, formatArea } from '@/lib/utils';
-import type { Site, Project, ProjectType } from '@/types';
+import type { Site, ProjectType } from '@/types';
 
 type FilterType = 'All' | 'Carbon' | 'Biodiversity' | 'Mixed';
 
@@ -21,7 +21,7 @@ interface DashboardProject {
   id: string;
   name: string;
   type: ProjectType;
-  status: Project['status'];
+  status: 'Active' | 'Pending';
   description: string;
   location: string;
   center: [number, number];
@@ -32,9 +32,9 @@ interface DashboardProject {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { projects: apiProjects, loading: projectsLoading, refetch: refetchProjects } = useProjects();
+  const { projects: apiProjects, loading: projectsLoading } = useProjects();
   const { sites: apiSites, loading: sitesLoading, refetch: refetchSites } = useSites(undefined);
-  
+
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [filter, setFilter] = useState<FilterType>('All');
 
@@ -43,7 +43,7 @@ export function DashboardPage() {
     id: p.id,
     name: p.name,
     type: p.project_type as ProjectType,
-    status: (p.status === 'active' ? 'Active' : p.status.charAt(0).toUpperCase() + p.status.slice(1)) as Project['status'],
+    status: (p.status === 'active' ? 'Active' : 'Pending') as DashboardProject['status'],
     description: p.location || '',
     location: p.location || '',
     center: [0, 0] as [number, number],
@@ -58,16 +58,15 @@ export function DashboardPage() {
   const totalArea = projects.reduce((sum, p) => sum + p.area, 0);
   const totalCarbon = allSites.reduce((sum, s) => sum + s.metrics.carbon_tco2e, 0);
 
-  const filteredProjects = filter === 'All'
-    ? projects
-    : projects.filter((p) => p.type === filter);
+  const filteredProjects = filter === 'All' ? projects : projects.filter(p => p.type === filter);
 
-  const filteredSites = filter === 'All'
-    ? allSites
-    : allSites.filter((s) => {
-        const project = projects.find(p => p.id === s.projectId);
-        return project?.type === filter;
-      });
+  const filteredSites =
+    filter === 'All'
+      ? allSites
+      : allSites.filter(s => {
+          const project = projects.find(p => p.id === s.projectId);
+          return project?.type === filter;
+        });
 
   const loading = projectsLoading || sitesLoading;
 
@@ -75,29 +74,35 @@ export function DashboardPage() {
     setSelectedSite(site);
   }, []);
 
-  const selectedProject = selectedSite ? projects.find(p => p.id === selectedSite.projectId) : undefined;
+  const selectedProject = selectedSite
+    ? projects.find(p => p.id === selectedSite.projectId)
+    : undefined;
 
   const handleSiteCreated = useCallback(
     (polygon: [number, number][], area: number, _center: [number, number]) => {
       showToast('success', `Site created successfully — ${formatArea(area)}`);
-      refetchSites();
+      void refetchSites();
     },
     [showToast, refetchSites]
   );
 
   return (
     <AppShell>
-      <div className="p-6 lg:p-8 max-w-[1600px] mx-auto">
-        <PageHeader title="Environmental portfolio" subtitle="A live overview of your projects and sites." delay={0}>
+      <div className="mx-auto max-w-[1600px] p-6 lg:p-8">
+        <PageHeader
+          title="Environmental portfolio"
+          subtitle="A live overview of your projects and sites."
+          delay={0}
+        >
           <div className="flex items-center gap-2">
-            {(Object.values(['All', 'Carbon', 'Biodiversity', 'Mixed']) as FilterType[]).map((f) => (
+            {(Object.values(['All', 'Carbon', 'Biodiversity', 'Mixed']) as FilterType[]).map(f => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3.5 py-2 text-xs font-medium rounded-md transition-all duration-fast ease-out ${
+                className={`rounded-md px-3.5 py-2 text-xs font-medium transition-all duration-fast ease-out ${
                   filter === f
-                    ? 'bg-primary/15 text-primary border border-primary/20'
-                    : 'text-muted hover:text-fg border border-app bg-elevated'
+                    ? 'border border-primary/20 bg-primary/15 text-primary'
+                    : 'hover:text-fg border border-app bg-elevated text-muted'
                 }`}
               >
                 {f}
@@ -107,7 +112,7 @@ export function DashboardPage() {
         </PageHeader>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {loading ? (
             <>
               <Skeleton className="h-28" />
@@ -117,24 +122,47 @@ export function DashboardPage() {
             </>
           ) : (
             <>
-              <KpiCard label="Projects" value={projects.length} icon={<Layers className="w-4 h-4" />} delay={50} />
-              <KpiCard label="Sites" value={totalSites} icon={<MapPin className="w-4 h-4" />} delay={100} />
-              <KpiCard label="Protected Area" value={totalArea} unit="ha" icon={<Leaf className="w-4 h-4" />} delay={150} />
-              <KpiCard label="Carbon Sequestered" value={totalCarbon} unit="tCO₂e" icon={<TrendingUp className="w-4 h-4" />} delay={200} format={formatNumber} />
+              <KpiCard
+                label="Projects"
+                value={projects.length}
+                icon={<Layers className="h-4 w-4" />}
+                delay={50}
+              />
+              <KpiCard
+                label="Sites"
+                value={totalSites}
+                icon={<MapPin className="h-4 w-4" />}
+                delay={100}
+              />
+              <KpiCard
+                label="Protected Area"
+                value={totalArea}
+                unit="ha"
+                icon={<Leaf className="h-4 w-4" />}
+                delay={150}
+              />
+              <KpiCard
+                label="Carbon Sequestered"
+                value={totalCarbon}
+                unit="tCO₂e"
+                icon={<TrendingUp className="h-4 w-4" />}
+                delay={200}
+                format={formatNumber}
+              />
             </>
           )}
         </div>
 
         {/* Map + Projects */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
           {/* Map */}
           <div
-            className="lg:col-span-2 bg-surface border border-app rounded-lg overflow-hidden animate-fade-up h-[500px] lg:h-[600px]"
+            className="animate-fade-up h-[500px] overflow-hidden rounded-lg border border-app bg-surface lg:col-span-2 lg:h-[600px]"
             style={{ animationDelay: '250ms' }}
           >
             {loading ? (
-              <div className="h-full flex items-center justify-center">
-                <Skeleton className="w-3/4 h-3/4" />
+              <div className="flex h-full items-center justify-center">
+                <Skeleton className="h-3/4 w-3/4" />
               </div>
             ) : (
               <MapView
@@ -150,7 +178,7 @@ export function DashboardPage() {
           </div>
 
           {/* Project list */}
-          <div className="space-y-4 animate-fade-up" style={{ animationDelay: '300ms' }}>
+          <div className="animate-fade-up space-y-4" style={{ animationDelay: '300ms' }}>
             <div className="flex items-center justify-between">
               <h3 className="text-h3 text-fg">Projects</h3>
               <span className="text-caption">{filteredProjects.length} active</span>
@@ -160,7 +188,7 @@ export function DashboardPage() {
                 title="No projects yet"
                 description="Create your first environmental project to begin mapping and monitoring sites."
                 actionLabel="Create Project"
-                onAction={() => showToast('success', 'Project creation coming soon')}
+                onAction={() => void showToast('success', 'Project creation coming soon')}
               />
             ) : (
               <div className="space-y-3">
@@ -168,7 +196,7 @@ export function DashboardPage() {
                   <ProjectCard
                     key={project.id}
                     project={project}
-                    onClick={() => navigate(`/projects/${project.id}`)}
+                    onClick={() => void navigate(`/projects/${project.id}`)}
                     delay={i * 50}
                   />
                 ))}

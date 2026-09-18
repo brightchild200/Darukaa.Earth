@@ -13,15 +13,13 @@ const metrics: { key: MetricKey; label: string }[] = [
 
 export function MetricSelector({ active, onChange }: MetricSelectorProps) {
   return (
-    <div className="flex items-center gap-1 bg-elevated rounded-md p-1 border border-app">
-      {metrics.map((metric) => (
+    <div className="flex items-center gap-1 rounded-md border border-app bg-elevated p-1">
+      {metrics.map(metric => (
         <button
           key={metric.key}
           onClick={() => onChange(metric.key)}
-          className={`px-3.5 py-1.5 text-xs font-medium rounded-[6px] transition-all duration-fast ease-out ${
-            active === metric.key
-              ? 'bg-primary/15 text-primary'
-              : 'text-muted hover:text-fg'
+          className={`rounded-[6px] px-3.5 py-1.5 text-xs font-medium transition-all duration-fast ease-out ${
+            active === metric.key ? 'bg-primary/15 text-primary' : 'hover:text-fg text-muted'
           }`}
         >
           {metric.label}

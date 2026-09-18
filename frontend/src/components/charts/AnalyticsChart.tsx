@@ -7,35 +7,38 @@ interface AnalyticsChartProps {
   metric: MetricKey;
 }
 
-const metricConfig: Record<MetricKey, {
-  label: string;
-  unit: string;
-  color: string;
-  format: (n: number) => string;
-}> = {
+const metricConfig: Record<
+  MetricKey,
+  {
+    label: string;
+    unit: string;
+    color: string;
+    format: (n: number) => string;
+  }
+> = {
   carbon_tco2e: {
     label: 'Carbon Sequestration',
     unit: 'tCO₂e',
     color: '#6EE7A1',
-    format: (n) => n.toLocaleString(),
+    format: n => n.toLocaleString(),
   },
   biodiversity_index: {
     label: 'Biodiversity Index',
     unit: '',
     color: '#A7D7B8',
-    format: (n) => n.toFixed(1),
+    format: n => n.toFixed(1),
   },
   ndvi: {
     label: 'NDVI',
     unit: '',
     color: '#6EE7A1',
-    format: (n) => n.toFixed(2),
+    format: n => n.toFixed(2),
   },
   projected_credit_usd: {
     label: 'Projected Value',
     unit: 'USD',
     color: '#F4C95D',
-    format: (n) => `$${(n / 1000).toFixed(0)}K`,
+    format: n => `$${(n / 1000).toFixed(0)}K`,
   },
 };
 
@@ -47,8 +50,8 @@ export function AnalyticsChart({ data, metric }: AnalyticsChartProps) {
     if (!chartRef.current) return;
 
     const config = metricConfig[metric];
-    const values = data.map((d) => d[metric]);
-    const months = data.map((d) => d.month);
+    const values = data.map(d => d[metric]);
+    const months = data.map(d => d.month);
 
     const options: Highcharts.Options = {
       chart: {
@@ -63,7 +66,7 @@ export function AnalyticsChart({ data, metric }: AnalyticsChartProps) {
           fontFamily: 'Inter, sans-serif',
         },
       },
-      title: null,
+      title: undefined,
       xAxis: {
         categories: months,
         tickColor: 'rgba(255,255,255,0.06)',
@@ -75,7 +78,7 @@ export function AnalyticsChart({ data, metric }: AnalyticsChartProps) {
         gridLineWidth: 0,
       },
       yAxis: {
-        title: null,
+        title: undefined,
         tickColor: 'rgba(255,255,255,0.06)',
         lineColor: 'rgba(255,255,255,0.06)',
         gridLineColor: 'rgba(255,255,255,0.04)',
@@ -96,7 +99,8 @@ export function AnalyticsChart({ data, metric }: AnalyticsChartProps) {
         borderWidth: 1,
         padding: 10,
         style: { color: '#F3F7F4', fontSize: '12px' },
-        headerFormat: '<span style="font-weight:600;margin-bottom:4px;display:block">{point.key}</span>',
+        headerFormat:
+          '<span style="font-weight:600;margin-bottom:4px;display:block">{point.key}</span>',
         pointFormatter: function () {
           const val = config.format(this.y as number);
           return `<span style="color:${config.color}">${config.label}: </span><span style="font-weight:600">${val} ${config.unit}</span>`;

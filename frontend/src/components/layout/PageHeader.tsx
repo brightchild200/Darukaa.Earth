@@ -10,7 +10,7 @@ interface PageHeaderProps {
 export function PageHeader({ title, subtitle, children, delay = 0 }: PageHeaderProps) {
   return (
     <div
-      className="flex items-end justify-between mb-8 animate-fade-up"
+      className="animate-fade-up mb-8 flex items-end justify-between"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div>

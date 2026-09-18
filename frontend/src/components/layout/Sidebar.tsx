@@ -20,45 +20,43 @@ export function Sidebar() {
     <aside
       className={`${
         collapsed ? 'w-16' : 'w-56'
-      } shrink-0 bg-surface border-r border-app flex flex-col transition-all duration-medium ease-out h-full`}
+      } flex h-full shrink-0 flex-col border-r border-app bg-surface transition-all duration-medium ease-out`}
     >
-      <div className="flex items-center justify-between px-4 h-16 border-b border-app">
+      <div className="flex h-16 items-center justify-between border-b border-app px-4">
         {!collapsed && (
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
               <Leaf className="w-4.5 h-4.5 text-primary" />
             </div>
-            <span className="text-sm font-semibold text-fg tracking-tight">Darukaa</span>
+            <span className="text-fg text-sm font-semibold tracking-tight">Darukaa</span>
           </div>
         )}
         {collapsed && (
-          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mx-auto">
+          <div className="mx-auto flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
             <Leaf className="w-4.5 h-4.5 text-primary" />
           </div>
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="text-muted hover:text-fg transition-colors duration-fast absolute top-5 -right-3 w-6 h-6 rounded-full bg-elevated border border-app flex items-center justify-center"
+          className="hover:text-fg absolute -right-3 top-5 flex h-6 w-6 items-center justify-center rounded-full border border-app bg-elevated text-muted transition-colors duration-fast"
           aria-label="Toggle sidebar"
         >
           <ChevronLeft
-            className={`w-3.5 h-3.5 transition-transform duration-normal ${collapsed ? 'rotate-180' : ''}`}
+            className={`h-3.5 w-3.5 transition-transform duration-normal ${collapsed ? 'rotate-180' : ''}`}
           />
         </button>
       </div>
 
-      <nav className="flex-1 py-4 px-3 flex flex-col gap-1">
-        {navItems.map((item) => {
+      <nav className="flex flex-1 flex-col gap-1 px-3 py-4">
+        {navItems.map(item => {
           const Icon = item.icon;
           const active = isActive(item.to);
           return (
             <NavLink
               key={item.to}
               to={item.to}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-all duration-fast ease-out ${
-                active
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-muted hover:text-fg hover:bg-elevated'
+              className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium transition-all duration-fast ease-out ${
+                active ? 'bg-primary/10 text-primary' : 'hover:text-fg text-muted hover:bg-elevated'
               }`}
             >
               <Icon className="w-4.5 h-4.5 shrink-0" />
@@ -68,27 +66,27 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="py-4 px-3 border-t border-app flex flex-col gap-1">
+      <div className="flex flex-col gap-1 border-t border-app px-3 py-4">
         <button
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted hover:text-fg hover:bg-elevated transition-all duration-fast ease-out`}
+          className={`hover:text-fg flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-all duration-fast ease-out hover:bg-elevated`}
         >
           <Globe2 className="w-4.5 h-4.5 shrink-0" />
           {!collapsed && <span>Global Map</span>}
         </button>
         <button
-          className={`flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-muted hover:text-fg hover:bg-elevated transition-all duration-fast ease-out`}
+          className={`hover:text-fg flex items-center gap-3 rounded-md px-3 py-2.5 text-sm font-medium text-muted transition-all duration-fast ease-out hover:bg-elevated`}
         >
           <Settings className="w-4.5 h-4.5 shrink-0" />
           {!collapsed && <span>Settings</span>}
         </button>
         {!collapsed && (
-          <div className="mt-2 px-3 py-2 flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-elevated border border-app flex items-center justify-center text-xs font-semibold text-secondary">
+          <div className="mt-2 flex items-center gap-2.5 px-3 py-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full border border-app bg-elevated text-xs font-semibold text-secondary">
               AD
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs font-medium text-fg truncate">Admin User</p>
-              <p className="text-[10px] text-muted truncate">admin@darukaa.earth</p>
+            <div className="min-w-0 flex-1">
+              <p className="text-fg truncate text-xs font-medium">Admin User</p>
+              <p className="truncate text-[10px] text-muted">admin@darukaa.earth</p>
             </div>
           </div>
         )}

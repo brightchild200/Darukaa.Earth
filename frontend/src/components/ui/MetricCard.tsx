@@ -13,13 +13,11 @@ interface MetricCardProps {
 export function MetricCard({ label, value, unit, icon, trend, accent = false }: MetricCardProps) {
   return (
     <div
-      className={`rounded-lg p-4 border transition-all duration-normal ease-out ${
-        accent
-          ? 'bg-primary/5 border-primary/20'
-          : 'bg-elevated border-app'
+      className={`rounded-lg border p-4 transition-all duration-normal ease-out ${
+        accent ? 'border-primary/20 bg-primary/5' : 'border-app bg-elevated'
       }`}
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <span className="text-caption uppercase tracking-wide">{label}</span>
         {icon && <span className={accent ? 'text-primary' : 'text-muted'}>{icon}</span>}
       </div>

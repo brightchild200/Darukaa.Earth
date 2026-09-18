@@ -6,7 +6,20 @@ function generateMonthlyData(
   startNdvi: number,
   startUsd: number
 ): MonthlyMetric[] {
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   let carbon = startCarbon * 0.72;
   let bio = startBio * 0.82;
   let ndvi = startNdvi * 0.88;
@@ -203,7 +216,8 @@ export const projects: Project[] = [
     name: 'Amazon Rainforest Restoration',
     type: 'Mixed',
     status: 'Active',
-    description: 'Large-scale reforestation and conservation across the Amazon basin, combining carbon sequestration with biodiversity monitoring in one of the world\'s most critical ecosystems.',
+    description:
+      "Large-scale reforestation and conservation across the Amazon basin, combining carbon sequestration with biodiversity monitoring in one of the world's most critical ecosystems.",
     location: 'Amazonas, Brazil',
     center: [-3.5, -62.0],
     area: 2840,
@@ -214,7 +228,8 @@ export const projects: Project[] = [
     name: 'Kenyan Rangeland Carbon',
     type: 'Carbon',
     status: 'Active',
-    description: 'Sustainable rangeland management practices that improve soil carbon sequestration while supporting pastoralist communities and wildlife corridors.',
+    description:
+      'Sustainable rangeland management practices that improve soil carbon sequestration while supporting pastoralist communities and wildlife corridors.',
     location: 'Laikipia County, Kenya',
     center: [0.4, 36.9],
     area: 1700,
@@ -225,7 +240,8 @@ export const projects: Project[] = [
     name: 'Borneo Biodiversity Reserve',
     type: 'Biodiversity',
     status: 'Active',
-    description: 'Protecting critical rainforest habitat for endangered species including orangutans, clouded leopards, and sun bears through community-led conservation.',
+    description:
+      'Protecting critical rainforest habitat for endangered species including orangutans, clouded leopards, and sun bears through community-led conservation.',
     location: 'Sabah, Malaysia',
     center: [5.1, 116.9],
     area: 1700,
@@ -236,13 +252,13 @@ export const projects: Project[] = [
 export const allSites = [...amazonSites, ...kenyaSites, ...borneoSites];
 
 export function getProjectById(id: string): Project | undefined {
-  return projects.find((p) => p.id === id);
+  return projects.find(p => p.id === id);
 }
 
 export function getSiteById(id: string): Site | undefined {
-  return allSites.find((s) => s.id === id);
+  return allSites.find(s => s.id === id);
 }
 
 export function getSitesByProject(projectId: string): Site[] {
-  return allSites.filter((s) => s.projectId === projectId);
+  return allSites.filter(s => s.projectId === projectId);
 }

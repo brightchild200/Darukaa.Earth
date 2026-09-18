@@ -18,10 +18,10 @@ export function KpiCard({ label, value, unit, icon, trend, format, delay = 0 }: 
 
   return (
     <div
-      className="bg-surface border border-app rounded-lg p-5 transition-all duration-normal ease-out hover:border-strong hover:-translate-y-0.5 animate-fade-up"
+      className="hover:border-strong animate-fade-up rounded-lg border border-app bg-surface p-5 transition-all duration-normal ease-out hover:-translate-y-0.5"
       style={{ animationDelay: `${delay}ms` }}
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="mb-3 flex items-center justify-between">
         <span className="text-caption uppercase tracking-wide">{label}</span>
         {icon && <span className="text-muted">{icon}</span>}
       </div>

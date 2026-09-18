@@ -17,12 +17,12 @@ export function RegisterPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     try {
       const tokens = await api.auth.register(email, password, fullName);
       setAuthToken(tokens.access_token);
       showToast('success', 'Account created successfully');
-      navigate('/dashboard');
+      void navigate('/dashboard');
     } catch (err) {
       showToast('error', err instanceof Error ? err.message : 'Registration failed');
     } finally {
@@ -31,9 +31,9 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-app flex">
+    <div className="flex min-h-screen bg-app">
       {/* Left side - branding */}
-      <div className="hidden lg:flex flex-1 flex-col justify-between p-12 relative overflow-hidden">
+      <div className="relative hidden flex-1 flex-col justify-between overflow-hidden p-12 lg:flex">
         <div className="absolute inset-0 opacity-[0.03]">
           <div
             className="absolute inset-0"
@@ -44,15 +44,18 @@ export function RegisterPage() {
           />
         </div>
 
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-primary/5 blur-3xl animate-pulse-subtle" />
-        <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-secondary/5 blur-3xl animate-pulse-subtle" style={{ animationDelay: '1s' }} />
+        <div className="animate-pulse-subtle absolute left-1/4 top-1/4 h-96 w-96 rounded-full bg-primary/5 blur-3xl" />
+        <div
+          className="animate-pulse-subtle absolute bottom-1/4 right-1/4 h-64 w-64 rounded-full bg-secondary/5 blur-3xl"
+          style={{ animationDelay: '1s' }}
+        />
 
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-primary" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <Leaf className="h-5 w-5 text-primary" />
             </div>
-            <span className="text-lg font-bold text-fg tracking-tight">DARUKAA.EARTH</span>
+            <span className="text-fg text-lg font-bold tracking-tight">DARUKAA.EARTH</span>
           </div>
         </div>
 
@@ -64,32 +67,33 @@ export function RegisterPage() {
             <br />
             <span className="text-primary">mapped.</span>
           </h1>
-          <p className="text-body text-muted max-w-md leading-relaxed">
-            A premium geospatial platform for managing and visualizing carbon and biodiversity projects across the globe.
+          <p className="text-body max-w-md leading-relaxed text-muted">
+            A premium geospatial platform for managing and visualizing carbon and biodiversity
+            projects across the globe.
           </p>
         </div>
 
-        <div className="relative z-10 flex items-center gap-6 text-caption">
+        <div className="text-caption relative z-10 flex items-center gap-6">
           <span>PostGIS Powered</span>
-          <span className="w-1 h-1 rounded-full bg-muted/40" />
+          <span className="h-1 w-1 rounded-full bg-muted/40" />
           <span>Satellite Intelligence</span>
-          <span className="w-1 h-1 rounded-full bg-muted/40" />
+          <span className="h-1 w-1 rounded-full bg-muted/40" />
           <span>Carbon Verified</span>
         </div>
       </div>
 
       {/* Right side - form */}
-      <div className="flex-1 flex items-center justify-center p-8">
-        <div className="w-full max-w-sm animate-fade-up">
-          <div className="lg:hidden flex items-center gap-3 mb-12 justify-center">
-            <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <Leaf className="w-5 h-5 text-primary" />
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="animate-fade-up w-full max-w-sm">
+          <div className="mb-12 flex items-center justify-center gap-3 lg:hidden">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
+              <Leaf className="h-5 w-5 text-primary" />
             </div>
-            <span className="text-lg font-bold text-fg tracking-tight">DARUKAA.EARTH</span>
+            <span className="text-fg text-lg font-bold tracking-tight">DARUKAA.EARTH</span>
           </div>
 
           <h2 className="text-h1 text-fg mb-2">Create account</h2>
-          <p className="text-body text-muted mb-8">Start managing your environmental projects</p>
+          <p className="text-body mb-8 text-muted">Start managing your environmental projects</p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
@@ -97,7 +101,7 @@ export function RegisterPage() {
               type="text"
               placeholder="John Doe"
               value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
+              onChange={e => setFullName(e.target.value)}
               required
             />
             <Input
@@ -105,7 +109,7 @@ export function RegisterPage() {
               type="email"
               placeholder="you@example.com"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={e => setEmail(e.target.value)}
               required
             />
             <Input
@@ -113,7 +117,7 @@ export function RegisterPage() {
               type="password"
               placeholder="••••••••"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={e => setPassword(e.target.value)}
               required
               minLength={8}
             />
@@ -121,21 +125,24 @@ export function RegisterPage() {
             <Button type="submit" variant="primary" size="lg" className="w-full" disabled={loading}>
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-app/30 border-t-app rounded-full animate-spin" />
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-app/30 border-t-app" />
                   Creating account...
                 </span>
               ) : (
                 <>
                   Create account
-                  <ArrowRight className="w-4 h-4" />
+                  <ArrowRight className="h-4 w-4" />
                 </>
               )}
             </Button>
           </form>
 
-          <p className="text-center text-sm text-muted mt-6">
+          <p className="mt-6 text-center text-sm text-muted">
             Already have an account?{' '}
-            <button onClick={() => navigate('/login')} className="text-primary hover:underline font-medium">
+            <button
+              onClick={() => void navigate('/login')}
+              className="font-medium text-primary hover:underline"
+            >
               Sign in
             </button>
           </p>
