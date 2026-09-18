@@ -1,10 +1,12 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Leaf, MapPin, Layers, TrendingUp } from 'lucide-react';
+import { Leaf, MapPin, Layers, TrendingUp, Plus } from 'lucide-react';
 import { AppShell } from '@/components/layout/AppShell';
 import { PageHeader } from '@/components/layout/PageHeader';
 import { KpiCard } from '@/components/ui/KpiCard';
 import { ProjectCard } from '@/components/projects/ProjectCard';
+import { Button } from '@/components/ui/Button';
+import { CreateProjectDialog } from '@/components/projects/CreateProjectDialog';
 import { MapView } from '@/components/map/MapView';
 import { SiteDrawer } from '@/components/sites/SiteDrawer';
 import { EmptyState } from '@/components/ui/EmptyState';
@@ -32,11 +34,16 @@ interface DashboardProject {
 export function DashboardPage() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { projects: apiProjects, loading: projectsLoading } = useProjects();
+  const {
+    projects: apiProjects,
+    loading: projectsLoading,
+    refetch: refetchProjects,
+  } = useProjects();
   const { sites: apiSites, loading: sitesLoading, refetch: refetchSites } = useSites(undefined);
 
   const [selectedSite, setSelectedSite] = useState<Site | null>(null);
   const [filter, setFilter] = useState<FilterType>('All');
+  const [showCreateProject, setShowCreateProject] = useState(false);
 
   // Convert API projects to frontend format
   const projects: DashboardProject[] = apiProjects.map(p => ({
@@ -86,6 +93,11 @@ export function DashboardPage() {
     [showToast, refetchSites]
   );
 
+  const handleProjectCreated = useCallback(() => {
+    void refetchProjects();
+    void refetchSites();
+  }, [refetchProjects, refetchSites]);
+
   return (
     <AppShell>
       <div className="mx-auto max-w-[1600px] p-6 lg:p-8">
@@ -95,6 +107,15 @@ export function DashboardPage() {
           delay={0}
         >
           <div className="flex items-center gap-2">
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => setShowCreateProject(true)}
+              className="gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Create Project
+            </Button>
             {(Object.values(['All', 'Carbon', 'Biodiversity', 'Mixed']) as FilterType[]).map(f => (
               <button
                 key={f}
@@ -188,7 +209,7 @@ export function DashboardPage() {
                 title="No projects yet"
                 description="Create your first environmental project to begin mapping and monitoring sites."
                 actionLabel="Create Project"
-                onAction={() => void showToast('success', 'Project creation coming soon')}
+                onAction={() => setShowCreateProject(true)}
               />
             ) : (
               <div className="space-y-3">
@@ -211,6 +232,13 @@ export function DashboardPage() {
         site={selectedSite}
         project={selectedProject}
         onClose={() => setSelectedSite(null)}
+      />
+
+      {/* Create Project Dialog */}
+      <CreateProjectDialog
+        open={showCreateProject}
+        onClose={() => setShowCreateProject(false)}
+        onSuccess={handleProjectCreated}
       />
     </AppShell>
   );

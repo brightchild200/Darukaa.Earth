@@ -1,4 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider } from '@/context/AuthContext';
+import { ProtectedRoute, PublicRoute } from '@/components/auth/ProtectedRoute';
 import { ToastProvider } from '@/hooks/useToast';
 import { ToastContainer } from '@/components/ui/Toast';
 import { LoginPage } from '@/pages/Login/LoginPage';
@@ -8,19 +10,49 @@ import { ProjectPage } from '@/pages/Project/ProjectPage';
 
 function App() {
   return (
-    <ToastProvider>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/projects" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/projects/:projectId" element={<ProjectPage />} />
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
-        </Routes>
-      </BrowserRouter>
-      <ToastContainer />
-    </ToastProvider>
+    <AuthProvider>
+      <ToastProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/login"
+              element={
+                <PublicRoute>
+                  <LoginPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/register"
+              element={
+                <PublicRoute>
+                  <RegisterPage />
+                </PublicRoute>
+              }
+            />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <DashboardPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="/projects" element={<Navigate to="/dashboard" replace />} />
+            <Route
+              path="/projects/:projectId"
+              element={
+                <ProtectedRoute>
+                  <ProjectPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          </Routes>
+        </BrowserRouter>
+        <ToastContainer />
+      </ToastProvider>
+    </AuthProvider>
   );
 }
 
